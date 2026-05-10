@@ -1,0 +1,164 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "User profile and balance information",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "description": "Firebase Auth UID" },
+        "displayName": { "type": "string", "description": "User's full name" },
+        "photoURL": { "type": "string", "description": "URL of user's profile picture" },
+        "phoneNumber": { "type": "string", "description": "User's mobile number" },
+        "balance": { "type": "number", "description": "Current wallet balance in ₹" },
+        "coins": { "type": "number", "description": "Current coin balance" },
+        "isPremium": { "type": "boolean", "description": "Whether the user has premium status" },
+        "premiumExpiry": { "type": "string", "format": "date-time", "description": "Premium membership expiry date" },
+        "isVIP": { "type": "boolean", "description": "Whether the user has VIP access" },
+        "todayEarnings": { "type": "number", "description": "Earnings for the current day" },
+        "totalEarnings": { "type": "number", "description": "Lifetime earnings" },
+        "referralEarnings": { "type": "number", "description": "Earnings from referrals" },
+        "referralCode": { "type": "string", "description": "Unique referral code" },
+        "referredBy": { "type": "string", "description": "UID of the user who referred this user" },
+        "referralCount": { "type": "number", "description": "Number of successful referrals" },
+        "lastCheckIn": { "type": "string", "format": "date-time", "description": "Last daily bonus check-in timestamp" },
+        "streak": { "type": "number", "description": "Current daily check-in streak" },
+        "spinsLeft": { "type": "number", "description": "Remaining spins for the day" },
+        "lastSpinDate": { "type": "string", "description": "Date of last spin (YYYY-MM-DD)" },
+        "role": { "type": "string", "enum": ["user", "admin"], "description": "User role" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Account creation timestamp" }
+      },
+      "required": ["uid", "phoneNumber", "balance", "role"]
+    },
+    "Task": {
+      "title": "Task",
+      "description": "Available tasks for users to complete",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string", "description": "Task title" },
+        "description": { "type": "string", "description": "Task description/instructions" },
+        "reward": { "type": "number", "description": "Reward amount in ₹" },
+        "type": { "type": "string", "enum": ["video", "download", "form"], "description": "Task category" },
+        "difficulty": { "type": "string", "enum": ["easy", "medium", "hard"], "description": "Difficulty level of the task" },
+        "duration": { "type": "number", "description": "Estimated time in seconds" },
+        "sponsored": { "type": "boolean", "description": "Whether it's a sponsored task" },
+        "active": { "type": "boolean", "description": "Whether the task is currently available" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["title", "reward", "type"]
+    },
+    "TaskSubmission": {
+      "title": "TaskSubmission",
+      "description": "User's proof of task completion",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "description": "UID of the user" },
+        "taskId": { "type": "string", "description": "ID of the task" },
+        "proof": { "type": "string", "description": "Proof text or image URL" },
+        "status": { "type": "string", "enum": ["pending", "approved", "rejected"], "description": "Submission status" },
+        "reward": { "type": "number", "description": "Reward amount at time of submission" },
+        "submittedAt": { "type": "string", "format": "date-time" },
+        "reviewedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "taskId", "status"]
+    },
+    "Withdrawal": {
+      "title": "Withdrawal",
+      "description": "Withdrawal requests from users",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "description": "UID of the user" },
+        "amount": { "type": "number", "description": "Withdrawal amount in ₹" },
+        "method": { "type": "string", "enum": ["UPI", "Paytm"], "description": "Payment method" },
+        "details": { "type": "string", "description": "UPI ID or Mobile Number" },
+        "status": { "type": "string", "enum": ["pending", "approved", "rejected"], "description": "Request status" },
+        "requestedAt": { "type": "string", "format": "date-time" },
+        "processedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "amount", "method", "details", "status"]
+    },
+    "Transaction": {
+      "title": "Transaction",
+      "description": "Wallet transaction history",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "description": "UID of the user" },
+        "amount": { "type": "number", "description": "Transaction amount" },
+        "currency": { "type": "string", "enum": ["INR", "COINS"], "description": "Transaction currency" },
+        "type": { "type": "string", "enum": ["credit", "debit"], "description": "Transaction type" },
+        "category": { "type": "string", "enum": ["task", "referral", "bonus", "spin", "withdrawal", "mystery_box", "purchase", "ad_reward", "affiliate"], "description": "Transaction category" },
+        "description": { "type": "string", "description": "Transaction details" },
+        "timestamp": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "amount", "type", "category"]
+    },
+    "BoxOpening": {
+      "title": "BoxOpening",
+      "description": "History of mystery boxes opened by users",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "boxId": { "type": "string" },
+        "boxType": { "type": "string" },
+        "amount": { "type": "number" },
+        "timestamp": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "boxId", "amount"]
+    },
+    "Quiz": {
+      "title": "Quiz",
+      "description": "Quiz challenges",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "category": { "type": "string", "enum": ["GK", "Cricket"] },
+        "entryFee": { "type": "number" },
+        "reward": { "type": "number" },
+        "questions": { "type": "array" },
+        "duration": { "type": "number" }
+      },
+      "required": ["title", "category", "entryFee", "reward"]
+    },
+    "QuizAttempt": {
+      "title": "QuizAttempt",
+      "description": "User quiz attempts",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "quizId": { "type": "string" },
+        "score": { "type": "number" },
+        "totalQuestions": { "type": "number" },
+        "rewardEarned": { "type": "number" },
+        "timestamp": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "quizId", "score"]
+    },
+    "AppSettings": {
+      "title": "AppSettings",
+      "description": "Global application configurations",
+      "type": "object",
+      "properties": {
+        "isAppLive": { "type": "boolean" },
+        "maintenanceMode": { "type": "boolean" },
+        "dailyBonusAmount": { "type": "number" },
+        "maxSpinReward": { "type": "number" },
+        "minSpinReward": { "type": "number" },
+        "mysteryBoxFreeMax": { "type": "number" },
+        "mysteryBoxPaidMax": { "type": "number" },
+        "mysteryBoxPaidPrice": { "type": "number" },
+        "winProbability": { "type": "number" },
+        "taskRewardMultiplier": { "type": "number" }
+      }
+    }
+  },
+  "firestore": {
+    "/users/{userId}": { "schema": "User", "description": "User profiles" },
+    "/tasks/{taskId}": { "schema": "Task", "description": "Available tasks" },
+    "/submissions/{submissionId}": { "schema": "TaskSubmission", "description": "Task submissions" },
+    "/withdrawals/{withdrawalId}": { "schema": "Withdrawal", "description": "Withdrawal requests" },
+    "/transactions/{transactionId}": { "schema": "Transaction", "description": "Wallet transactions" },
+    "/boxOpenings/{openingId}": { "schema": "BoxOpening", "description": "Mystery box history" },
+    "/quizzes/{quizId}": { "schema": "Quiz", "description": "Quiz challenges" },
+    "/quizAttempts/{attemptId}": { "schema": "QuizAttempt", "description": "User quiz attempts" },
+    "/settings/global": { "schema": "AppSettings", "description": "Global settings" }
+  }
+}
